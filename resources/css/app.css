@@ -1,0 +1,166 @@
+@import '@fontsource-variable/geist';
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../app/**/*.php';
+
+/*
+ * Design tokens — see /design for the living style guide.
+ *
+ * Inspired by the agency's reference board: light grey canvas, white
+ * cards with large radii, black ink, one coral accent, pill buttons and
+ * round icon buttons, light-weight type (Geist).
+ *
+ * primary  : coral, the only brand colour (actions, highlights, charts).
+ * neutrals : Tailwind "slate" re-tuned to neutral greys (no blue cast).
+ * success  : green   = valid
+ * danger   : crimson = refused (kept apart from the coral)
+ * warning  : amber   = attention (kept apart from the coral)
+ *
+ * Text contrast (AA on white): use the 700 shade for coloured text,
+ * 600+ shades as backgrounds behind white text.
+ */
+@theme {
+    --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    --color-primary-50: oklch(0.975 0.012 45);
+    --color-primary-100: oklch(0.945 0.03 45);
+    --color-primary-200: oklch(0.895 0.06 43);
+    --color-primary-300: oklch(0.83 0.1 41);
+    --color-primary-400: oklch(0.74 0.145 39);
+    --color-primary-500: oklch(0.67 0.17 38);
+    --color-primary-600: oklch(0.585 0.175 36);
+    --color-primary-700: oklch(0.5 0.155 35);
+    --color-primary-800: oklch(0.42 0.125 34);
+    --color-primary-900: oklch(0.35 0.095 33);
+    --color-primary-950: oklch(0.25 0.06 32);
+
+    --color-slate-50: oklch(0.982 0.001 90);
+    --color-slate-100: oklch(0.958 0.002 90);
+    --color-slate-200: oklch(0.92 0.003 90);
+    --color-slate-300: oklch(0.865 0.004 90);
+    --color-slate-400: oklch(0.715 0.005 90);
+    --color-slate-500: oklch(0.585 0.006 90);
+    --color-slate-600: oklch(0.475 0.006 90);
+    --color-slate-700: oklch(0.375 0.006 90);
+    --color-slate-800: oklch(0.275 0.005 90);
+    --color-slate-900: oklch(0.205 0.004 90);
+    --color-slate-950: oklch(0.145 0.003 90);
+
+    --color-success-50: oklch(0.979 0.021 166);
+    --color-success-100: oklch(0.95 0.052 163);
+    --color-success-500: oklch(0.65 0.16 155);
+    --color-success-600: oklch(0.55 0.15 155);
+    --color-success-700: oklch(0.47 0.125 156);
+    --color-success-800: oklch(0.4 0.1 157);
+
+    --color-danger-50: oklch(0.972 0.014 10);
+    --color-danger-100: oklch(0.935 0.034 10);
+    --color-danger-500: oklch(0.6 0.22 15);
+    --color-danger-600: oklch(0.53 0.21 15);
+    --color-danger-700: oklch(0.46 0.18 15);
+    --color-danger-800: oklch(0.39 0.15 15);
+
+    --color-warning-50: oklch(0.985 0.022 90);
+    --color-warning-100: oklch(0.96 0.055 90);
+    --color-warning-400: oklch(0.86 0.16 85);
+    --color-warning-500: oklch(0.8 0.16 78);
+    --color-warning-600: oklch(0.68 0.15 70);
+    --color-warning-700: oklch(0.54 0.12 65);
+    --color-warning-800: oklch(0.45 0.1 62);
+
+    /* Flat look: a hairline of shadow only. */
+    --shadow-soft: 0 1px 2px 0 oklch(0.2 0 0 / 0.03);
+    --shadow-lifted: 0 2px 6px 0 oklch(0.2 0 0 / 0.05), 0 16px 40px -12px oklch(0.2 0 0 / 0.14);
+
+    /* Card radii: big outer cards, smaller tiles inside them. */
+    --radius-card: 1.75rem;
+    --radius-tile: 1.25rem;
+    --animate-pop: pop 220ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+
+    @keyframes pop {
+        0% {
+            transform: scale(0.92);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+}
+
+@layer base {
+    html {
+        font-size: 16px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        letter-spacing: -0.005em;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* Browsers give fieldsets min-width: min-content, which overflows on phones. */
+    fieldset {
+        min-width: 0;
+    }
+
+    :focus-visible {
+        outline: 3px solid var(--color-primary-500);
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    /*
+     * Signature element: ticket shape (see <x-ticket>).
+     * The ticket is made of two halves; each half cuts its own side notches
+     * with a radial mask, so the perforation always lines up whatever the
+     * content height. Masks hide box-shadows: put the shadow on the parent
+     * with a drop-shadow filter instead.
+     */
+    .ticket-top,
+    .ticket-bottom {
+        --notch: 14px;
+    }
+
+    .ticket-top {
+        -webkit-mask:
+            radial-gradient(circle var(--notch) at 0 100%, #0000 98%, #000) left / 51% 100% no-repeat,
+            radial-gradient(circle var(--notch) at 100% 100%, #0000 98%, #000) right / 51% 100% no-repeat;
+        mask:
+            radial-gradient(circle var(--notch) at 0 100%, #0000 98%, #000) left / 51% 100% no-repeat,
+            radial-gradient(circle var(--notch) at 100% 100%, #0000 98%, #000) right / 51% 100% no-repeat;
+    }
+
+    .ticket-bottom {
+        -webkit-mask:
+            radial-gradient(circle var(--notch) at 0 0, #0000 98%, #000) left / 51% 100% no-repeat,
+            radial-gradient(circle var(--notch) at 100% 0, #0000 98%, #000) right / 51% 100% no-repeat;
+        mask:
+            radial-gradient(circle var(--notch) at 0 0, #0000 98%, #000) left / 51% 100% no-repeat,
+            radial-gradient(circle var(--notch) at 100% 0, #0000 98%, #000) right / 51% 100% no-repeat;
+    }
+
+    .ticket-shadow {
+        filter: drop-shadow(0 1px 1px oklch(0.2 0 0 / 0.06)) drop-shadow(0 8px 16px oklch(0.2 0 0 / 0.1));
+    }
+}
